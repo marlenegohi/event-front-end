@@ -2,14 +2,19 @@
 import { useState } from "react";
 
 type Role = { label: string; value: string };
-
 type RoleSelectorProps = {
     roles: Role[];
     defaultRole?: string;
+    onChange?: (value: string) => void; // ← ajout
 };
 
-const RoleSelector = ({ roles, defaultRole }: RoleSelectorProps) => {
+const RoleSelector = ({ roles, defaultRole, onChange }: RoleSelectorProps) => {
     const [selected, setSelected] = useState(defaultRole ?? roles[0].value);
+
+    const handleSelect = (value: string) => {
+        setSelected(value);
+        onChange?.(value);
+    };
 
     return (
         <div className="mb-4">
@@ -18,7 +23,7 @@ const RoleSelector = ({ roles, defaultRole }: RoleSelectorProps) => {
                 {roles.map((role) => (
                     <button
                         key={role.value}
-                        onClick={() => setSelected(role.value)}
+                        onClick={() => handleSelect(role.value)}
                         className={`flex-1 py-2 rounded-lg border text-xs font-medium transition-colors
                             ${selected === role.value
                             ? "bg-blue-50 border-blue-400 text-blue-700"

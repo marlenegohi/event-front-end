@@ -1,4 +1,3 @@
-import {FeaturedHeroCard} from "@/app/components/FeaturedHeroCard";
 import FloatingNav from "@/app/components/MenuBar";
 import TicketList from "@/app/components/TicketList";
 import SearchBar from "@/app/components/SearchBar";
@@ -15,7 +14,6 @@ export default function UserDashboard() {
         <div className="w-screen min-h-screen bg-gray-50">
             <FloatingNav />
             <main className="ml-64 p-6 space-y-6">
-                <FeaturedHeroCard />
                 <SearchBar />
                 <TicketList tickets={tickets} />
             </main>
