@@ -1,12 +1,31 @@
 "use client";
-
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Home, Search, Bell, User, Settings, Bookmark } from "lucide-react";
+import { Home, Search, Bell, User, Settings, Bookmark, LogOut } from "lucide-react";
+import { logout } from "@/app/hooks/userAuth";
+
+type AuthUser = {
+    id: number;
+    name: string;
+    email: string;
+    role: string;
+    avatarUrl?: string;
+};
+
+// ← Fonction utilitaire en dehors du composant
+function getSessionUser(): AuthUser | null {
+    if (typeof window === "undefined") return null;
+    const stored = sessionStorage.getItem("user");
+    return stored ? JSON.parse(stored) : null;
+}
 
 const FloatingNav = () => {
     const [active, setActive] = useState(0);
-    const [indicatorStyle, setIndicatorStyle] = useState({ height: 0, top: 0, left: 0, width: 0});
+    const [indicatorStyle, setIndicatorStyle] = useState({ height: 0, top: 0, left: 0, width: 0 });
+
+    // ← Initialisation lazy — pas de useEffect, pas de setState
+    const [user] = useState<AuthUser | null>(getSessionUser);
+
     const containerRef = useRef<HTMLDivElement>(null);
     const btnRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -20,7 +39,6 @@ const FloatingNav = () => {
         { id: 6, icon: <Settings size={22} />, label: "Settings" },
     ];
 
-    // Update indicator position when active changes or resize
     useEffect(() => {
         const updateIndicator = () => {
             if (btnRefs.current[active] && containerRef.current) {
@@ -29,56 +47,72 @@ const FloatingNav = () => {
                 if (!btn) return;
                 const btnRect = btn.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
-
                 setIndicatorStyle({
                     height: btnRect.height,
-                    top : btnRect.top - containerRect.top,
-                    left: 0,   // dépasse du bord gauche du conteneur
+                    top: btnRect.top - containerRect.top,
+                    left: 0,
                     width: containerRect.width,
                 });
             }
         };
-
         updateIndicator();
         window.addEventListener("resize", updateIndicator);
         return () => window.removeEventListener("resize", updateIndicator);
     }, [active]);
 
+    const initiale = user?.name?.charAt(0).toUpperCase() ?? "?";
+
     return (
-            <div className="fixed left-0 top-0 z-50 h-screen w-64">
-                    <div className="flex flex-row items-center w-full px-6 py-4 gap-3 flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700">
-                            <img src="https://i.pravatar.cc/150" alt="avatar" className="w-full h-full object-cover"/>
-                        </div>
-
-                        <span className="text-sm font-semibold text-gray-800 dark:text-white">
-                            John Doe
-                        </span>
-                    </div>
-
-                {/* séparateur */}
-                <div className="w-full px-4 mb-2">
-                    <div className="border-t border-gray-200 dark:border-gray-700" />
+        <div className="fixed left-0 top-0 z-50 h-screen w-64">
+            <div className="flex flex-row items-center w-full px-6 py-4 gap-3 flex-shrink-0">
+                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center bg-blue-600">
+                    {user?.avatarUrl ? (
+                        <img src={user.avatarUrl} alt="avatar" className="w-full h-full object-cover" />
+                    ) : (
+                        <span className="text-white text-sm font-semibold">{initiale}</span>
+                    )}
                 </div>
-                <div
-                    ref={containerRef}
-                    className="relative flex flex-col items-center justify-start gap-2 h-full w-full pt-2"
-                >
+                <div>
+                    <span className="text-sm font-semibold text-gray-800 dark:text-white block">
+                        {user?.name ?? "Chargement..."}
+                    </span>
+                    <span className="text-xs text-gray-400">
+                        {user?.role === "organizer" ? "Organisateur"
+                            : user?.role === "admin" ? "Admin"
+                            : "Utilisateur"}
+                    </span>
+                </div>
+            </div>
+
+            <div className="w-full px-4 mb-2">
+                <div className="border-t border-gray-200 dark:border-gray-700" />
+            </div>
+
+            <div
+                ref={containerRef}
+                className="relative flex flex-col items-center justify-start gap-2 h-full w-full pt-2"
+            >
                 {items.map((item, index) => (
                     <button
                         key={item.id}
-                        ref={(el) => {
-                            btnRefs.current[item.id] = el;
-                        }}
+                        ref={(el) => { btnRefs.current[item.id] = el; }}
                         onClick={() => setActive(index)}
-                        className="relative flex flex-row items-center justify-start gap-3 py-4 px-6 w-full text-sm font-medium text-gray-600 dark:text-gray-300">
+                        className="relative flex flex-row items-center justify-start gap-3 py-4 px-6 w-full text-sm font-medium text-gray-600 dark:text-gray-300"
+                    >
                         <div className="z-10">{item.icon}</div>
-                        {/* hide labels on small screens */}
                         <span className="text-xs mt-1">{item.label}</span>
                     </button>
                 ))}
 
-                {/* Sliding Active Indicator */}
+                {/* Bouton déconnexion */}
+                <button
+                    onClick={logout}
+                    className="absolute bottom-8 left-0 w-full flex items-center gap-3 px-6 py-3 text-xs text-red-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors"
+                >
+                    <LogOut size={18} />
+                    Se déconnecter
+                </button>
+
                 <motion.div
                     animate={indicatorStyle}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}

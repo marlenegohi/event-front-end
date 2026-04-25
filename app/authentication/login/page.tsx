@@ -1,4 +1,5 @@
 "use client";
+import { isValidEmail } from "@/app/utils/validation";
 import { useState } from "react";
 import Link from "next/link";
 import AuthCard from "@/app/components/AuthCard";
@@ -18,6 +19,11 @@ export default function LoginPage() {
             return;
         }
 
+        if (!isValidEmail(email)) {
+            setError("Veuillez entrer une adresse email valide.");
+            return;
+        }
+
         setLoading(true);
         try {
             const res = await fetch("/backend/user/login", {
@@ -29,8 +35,7 @@ export default function LoginPage() {
             if (res.ok) {
                 const data = await res.json();
 
-                // Stocke les infos en session
-                localStorage.setItem("user", JSON.stringify(data));
+                sessionStorage.setItem("user", JSON.stringify(data));
 
                 // Redirige selon le rôle
                 if (data.role === "admin") {

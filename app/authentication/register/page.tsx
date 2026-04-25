@@ -1,4 +1,5 @@
 "use client";
+import { isValidEmail } from "@/app/utils/validation";
 import { useState } from "react";
 import Link from "next/link";
 import AuthCard from "@/app/components/AuthCard";
@@ -26,6 +27,10 @@ export default function RegisterPage() {
 
         if (!firstName || !lastName || !email || !password) {
             setError("Veuillez remplir tous les champs obligatoires.");
+            return;
+        }
+        if (!isValidEmail(email)) {
+            setError("Veuillez entrer une adresse email valide.");
             return;
         }
         if (password !== confirmPassword) {
