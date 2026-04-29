@@ -74,10 +74,10 @@ export const FeaturedHeroCard = () => {
                                         className="w-full h-full object-cover"
                                         loading="lazy"
                                     />
-                                    <div className="buy-overlay absolute inset-0 bg-black/40 flex flex-col justify-end p-4">
+                                    <div className="buy-overlay absolute inset-0 bg-black/40 flex flex-col justify-center items-center p-4">
                                         <button
-                                            onClick={() => router.push(`/concerts/${(index % images.length) + 1}/purchase`)}
-                                            className="w-full bg-white text-gray-900 text-xs font-medium py-2 rounded-lg hover:bg-blue-50 transition-colors"
+                                            onClick={() => router.push(`/user/ticket`)}
+                                            className="w-3/4 bg-white text-gray-900 text-xs font-medium py-2 rounded-lg hover:bg-blue-50 transition-colors"
                                         >
                                             Acheter un billet
                                         </button>
