@@ -5,6 +5,7 @@ import ProtectedRoute from "@/app/components/ProtectedRoute";
 import FloatingNav from "@/app/components/MenuBar";
 import TicketList from "@/app/components/TicketList";
 import SearchBar from "@/app/components/SearchBar";
+import {FeaturedHeroCard} from "@/app/components/FeaturedHeroCard";
 
 const tickets = [
     { image: "https://i.pravatar.cc/150?img=1", date: "January 26, 2020", artist: "Dua Lipa", venue: "Omeara" },
@@ -24,6 +25,7 @@ export default function UserDashboard() {
                             <p className="text-sm text-gray-500 dark:text-gray-400">
                                 Bonjour, <span className="font-medium text-gray-800 dark:text-white">{user.name}</span>
                             </p>
+                            <FeaturedHeroCard />
                             <SearchBar />
                             <TicketList tickets={tickets} />
                         </main>

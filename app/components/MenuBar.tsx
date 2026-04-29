@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Home, Search, Bell, User, Settings, Bookmark, LogOut } from "lucide-react";
+import { Home, Search, Bell, Settings, LogOut } from "lucide-react";
 import { logout } from "@/app/hooks/userAuth";
 
 type AuthUser = {
@@ -12,7 +12,6 @@ type AuthUser = {
     avatarUrl?: string;
 };
 
-// ← Fonction utilitaire en dehors du composant
 function getSessionUser(): AuthUser | null {
     if (typeof window === "undefined") return null;
     const stored = sessionStorage.getItem("user");
@@ -23,7 +22,6 @@ const FloatingNav = () => {
     const [active, setActive] = useState(0);
     const [indicatorStyle, setIndicatorStyle] = useState({ height: 0, top: 0, left: 0, width: 0 });
 
-    // ← Initialisation lazy — pas de useEffect, pas de setState
     const [user] = useState<AuthUser | null>(getSessionUser);
 
     const containerRef = useRef<HTMLDivElement>(null);
