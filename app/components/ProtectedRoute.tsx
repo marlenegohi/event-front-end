@@ -1,7 +1,8 @@
 "use client";
-import { useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import { subscribeToSessionChanges } from "@/app/utils/sessionStorage";
 
 export type AuthUser = {
     id: number;
@@ -16,12 +17,23 @@ type Props = {
     requiredRole?: string;
 };
 
+function getSnapshot(): string | null {
+    if (typeof window === "undefined") return null;
+    return sessionStorage.getItem("user");
+}
+
+function getServerSnapshot(): null {
+    return null;
+}
+
 export default function ProtectedRoute({ children, requiredRole }: Props) {
     const router = useRouter();
 
-    const stored = typeof window !== "undefined"
-        ? sessionStorage.getItem("user")
-        : null;
+    const stored = useSyncExternalStore(
+        subscribeToSessionChanges,
+        getSnapshot,
+        getServerSnapshot
+    );
 
     const user: AuthUser | null = stored ? JSON.parse(stored) : null;
 
@@ -29,12 +41,24 @@ export default function ProtectedRoute({ children, requiredRole }: Props) {
         (!requiredRole || user.role === requiredRole);
 
     useEffect(() => {
-        if (!isAllowed) {
-            router.replace("/authentication/login");
-        }
-    }, [isAllowed, router]);
+        if (!stored || !isAllowed) {
+            const timer = setTimeout(() => {
+                const currentStored = sessionStorage.getItem("user");
+                if (!currentStored) {
+                    router.replace("/authentication/login");
+                } else {
+                    const currentUser = JSON.parse(currentStored);
+                    if (requiredRole && currentUser.role !== requiredRole) {
+                        router.replace("/authentication/login");
+                    }
+                }
+            }, 50);
 
-    // Tant que la vérification n'est pas faite ou non autorisé
+            return () => clearTimeout(timer);
+        }
+    }, [stored, isAllowed, router, requiredRole]);
+
+    if (!stored) return null;
     if (!isAllowed) return null;
 
     return <>{children(user!)}</>;

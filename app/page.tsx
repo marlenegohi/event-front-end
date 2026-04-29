@@ -6,17 +6,15 @@ export default function Home() {
     const router = useRouter();
 
     useEffect(() => {
-        const stored = localStorage.getItem("user");
+        const stored = sessionStorage.getItem("user");
 
         if (!stored) {
-            // Pas connecté, renvoie vers login
             router.replace("/authentication/login");
             return;
         }
 
         const user = JSON.parse(stored);
 
-        // Redirige selon le rôle
         if (user.role === "admin") {
             router.replace("/dashboard/admin");
         } else if (user.role === "organizer") {
@@ -26,6 +24,5 @@ export default function Home() {
         }
     }, [router]);
 
-    // Affiche rien pendant la redirection
     return null;
 }

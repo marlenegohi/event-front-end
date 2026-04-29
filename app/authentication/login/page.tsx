@@ -1,5 +1,6 @@
 "use client";
 import { isValidEmail } from "@/app/utils/validation";
+import { setSessionItem } from "@/app/utils/sessionStorage";
 import { useState } from "react";
 import Link from "next/link";
 import AuthCard from "@/app/components/AuthCard";
@@ -34,16 +35,27 @@ export default function LoginPage() {
 
             if (res.ok) {
                 const data = await res.json();
+                console.log("✅ Login successful - Role:", data.role, "| User:", data.name);
 
-                sessionStorage.setItem("user", JSON.stringify(data));
+                const userData = {
+                    id: data.id,
+                    name: data.name,
+                    email: data.email,
+                    role: data.role
+                };
 
-                // Redirige selon le rôle
+                setSessionItem("user", JSON.stringify(userData));
+
+                // Redirige selon le rôle avec replace pour éviter le back
                 if (data.role === "admin") {
-                    window.location.href = "/dashboard/admin";
+                    console.log("🚀 Redirecting to admin dashboard");
+                    window.location.replace("/dashboard/admin");
                 } else if (data.role === "organizer") {
-                    window.location.href = "/organizer/dashboard";
+                    console.log("🚀 Redirecting to organizer dashboard");
+                    window.location.replace("/organizer/dashboard");
                 } else {
-                    window.location.href = "/user/user-dashboard";
+                    console.log("🚀 Redirecting to user dashboard");
+                    window.location.replace("/user/user-dashboard");
                 }
             } else {
                 const msg = await res.text();

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { clearSession } from "@/app/utils/sessionStorage";
 
 export type AuthUser = {
     id: number;
@@ -34,6 +35,7 @@ export function useAuth(requiredRole?: string) {
 }
 
 export function logout() {
-    sessionStorage.removeItem("user");
-    window.location.href = "/authentication/login";
+    console.log("🚪 Logging out");
+    clearSession();
+    window.location.replace("/authentication/login");
 }

@@ -18,11 +18,11 @@ export default function UserDashboard() {
         <NoSSR>
             <ProtectedRoute requiredRole="user">
                 {(user) => (
-                    <div className="w-screen min-h-screen bg-gray-50">
+                    <div className="flex min-h-screen bg-gray-50 dark:bg-neutral-950">
                         <FloatingNav />
-                        <main className="ml-64 p-6 space-y-6">
-                            <p className="text-sm text-gray-500">
-                                Bonjour, <span className="font-medium">{user.name}</span>
+                        <main className="ml-64 flex-1 p-6 space-y-6">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                                Bonjour, <span className="font-medium text-gray-800 dark:text-white">{user.name}</span>
                             </p>
                             <SearchBar />
                             <TicketList tickets={tickets} />
