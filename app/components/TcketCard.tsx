@@ -1,7 +1,7 @@
 type TicketCardProps = {
     image: string;
     date: string;
-    description: string; // ← nom de l'event
+    description: string;
     venue: string;
     city: string;
     price: number;
