@@ -9,8 +9,7 @@ type PurchaseStepperProps = {
 const steps = [
     { id: 1, label: "Concert" },
     { id: 2, label: "Billets" },
-    { id: 3, label: "Paiement" },
-    { id: 4, label: "Confirmation" },
+    { id: 3, label: "Confirmation" },
 ];
 
 const PurchaseStepper = ({ currentStep, onStepClick }: PurchaseStepperProps) => {
