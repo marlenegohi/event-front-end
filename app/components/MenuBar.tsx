@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
-import { Home, Search, Bell, Settings, LogOut } from "lucide-react";
+import { Home, Search, Bell, Settings, LogOut, Users } from "lucide-react";
 import { logout } from "@/app/hooks/userAuth";
 import { subscribeToSessionChanges } from "@/app/utils/sessionStorage";
+import { useRouter } from "next/navigation";
 
 type AuthUser = {
     id: number;
@@ -22,6 +23,7 @@ function getServerSnapshot(): null {
 }
 
 const FloatingNav = () => {
+    const router = useRouter();
     const [active, setActive] = useState(0);
     const [indicatorStyle, setIndicatorStyle] = useState({ height: 0, top: 0, left: 0, width: 0 });
 
@@ -36,12 +38,22 @@ const FloatingNav = () => {
 
     const user: AuthUser | null = stored ? JSON.parse(stored) : null;
 
-    const items = [
-        { id: 0, icon: <Home size={22} />, label: "Home" },
-        { id: 1, icon: <Search size={22} />, label: "Search" },
-        { id: 2, icon: <Bell size={22} />, label: "Alerts" },
-        { id: 3, icon: <Settings size={22} />, label: "Settings" },
+    const userItems = [
+        { id: 0, icon: <Home size={22} />, label: "Home", href: "/user/dashboard" },
+        { id: 1, icon: <Search size={22} />, label: "Search", href: null },
+        { id: 2, icon: <Bell size={22} />, label: "Alerts", href: null },
+        { id: 3, icon: <Settings size={22} />, label: "Settings", href: null },
     ];
+
+    const organizerItems = [
+        { id: 0, icon: <Home size={22} />, label: "Dashboard", href: "/organizer/dashboard" },
+        { id: 1, icon: <Search size={22} />, label: "Mes concerts", href: "/organizer/concerts" },
+        { id: 2, icon: <Bell size={22} />, label: "Créer un concert", href: "/organizer/create" },
+        { id: 3, icon: <Users size={22} />, label: "Artistes", href: "/organizer/artist" },
+        { id: 4, icon: <Settings size={22} />, label: "Settings", href: null },
+    ];
+
+    const items = user?.role === "organizer" ? organizerItems : userItems;
 
     useEffect(() => {
         const updateIndicator = () => {
@@ -84,7 +96,7 @@ const FloatingNav = () => {
                     <span className="text-xs text-gray-400">
                         {user?.role === "organizer" ? "Organisateur"
                             : user?.role === "admin" ? "Admin"
-                            : "Utilisateur"}
+                                : "Utilisateur"}
                     </span>
                 </div>
             </div>
@@ -101,11 +113,14 @@ const FloatingNav = () => {
                     <button
                         key={item.id}
                         ref={(el) => { btnRefs.current[item.id] = el; }}
-                        onClick={() => setActive(index)}
+                        onClick={() => {
+                            setActive(index);
+                            if (item.href) router.push(item.href);
+                        }}
                         className="relative flex flex-row items-center justify-start gap-3 py-4 px-6 w-full text-sm font-medium text-gray-600 dark:text-gray-300"
                     >
                         <div className="z-10">{item.icon}</div>
-                        <span className="text-xs mt-1">{item.label}</span>
+                        <span className="z-10 text-xs mt-1">{item.label}</span>
                     </button>
                 ))}
 

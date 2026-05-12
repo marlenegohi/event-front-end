@@ -1,24 +1,29 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import {useRouter} from "next/navigation";
 
-type Event = {
+type EventDTO = {
     id: number;
+    place: number;
     description: string;
+    address: string;
     imageUrl: string;
     date: string;
     city: string;
     price: number;
+    createdAt: string;
+    artisteName: string[];
+    organizerName: string[];
+    ticketCount: number;
+    organizerId: number;
 };
 
 type FeaturedHeroCardProps = {
-    events: Event[];
+    events: EventDTO[];
 };
 
 export const FeaturedHeroCard = ({ events }: FeaturedHeroCardProps) => {
     const router = useRouter();
-
-    const duplicatedEvents = [...events, ...events];
 
     return (
         <>
@@ -65,7 +70,7 @@ export const FeaturedHeroCard = ({ events }: FeaturedHeroCardProps) => {
                 <div className="relative z-10 w-full flex items-center justify-center py-8">
                     <div className="scroll-container w-full max-w-6xl">
                         <div className="infinite-scroll flex gap-6 w-max">
-                            {duplicatedEvents.map((event, index) => (
+                            {events.map((event, index) => (
                                 <div
                                     key={`${event.id}-${index}`}
                                     className="image-item relative flex-shrink-0 w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 rounded-xl overflow-hidden shadow-2xl"

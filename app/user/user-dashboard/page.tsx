@@ -22,12 +22,18 @@ type TicketDTO = {
 
 type EventDTO = {
     id: number;
+    place: number;
     description: string;
+    address: string;
     imageUrl: string;
     date: string;
     city: string;
     price: number;
-    address: string;
+    createdAt: string;
+    artisteName: string[];
+    organizerName: string[];
+    ticketCount: number;
+    organizerId: number;
 };
 
 const FILTERS = ["Tous", "Rock", "Pop", "Jazz", "Hip-hop", "Classique"];

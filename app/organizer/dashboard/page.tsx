@@ -72,7 +72,7 @@ function DashboardContent({ user }: { user: AuthUser }) {
                     </div>
                     <div className="flex gap-2">
                         <button
-                            onClick={() => router.push("/organizer/artist/")}
+                            onClick={() => router.push("/organizer/artist/add")}
                             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm hover:bg-gray-50 transition-colors"
                         >
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -112,7 +112,7 @@ function DashboardContent({ user }: { user: AuthUser }) {
                     )}
 
                     <div className="flex flex-col divide-y divide-gray-100 dark:divide-neutral-800">
-                        {events.map((c) => {
+                        {events.slice(0, 3).map((c) => {
                             const status = getEventStatus(c.date);
                             return (
                                 <div key={c.id} className="flex items-center gap-3 py-3">
@@ -138,6 +138,14 @@ function DashboardContent({ user }: { user: AuthUser }) {
                         })}
                     </div>
                 </div>
+                {events.length > 3 && (
+                    <button
+                        onClick={() => router.push("/organizer/concerts")}
+                        className="w-full text-xs text-blue-600 hover:text-blue-700 text-center pt-3 border-t border-gray-100 mt-2"
+                    >
+                        Voir tous les concerts ({events.length}) →
+                    </button>
+                )}
             </main>
         </div>
     );
