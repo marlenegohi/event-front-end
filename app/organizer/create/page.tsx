@@ -2,7 +2,7 @@
 import NoSSR from "@/app/components/NoSSR";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import FloatingNav from "@/app/components/MenuBar";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { AuthUser } from "@/app/components/ProtectedRoute";
 import { useRouter } from "next/navigation";
 
@@ -37,6 +37,24 @@ function CreateEventForm({ user }: { user: AuthUser }) {
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [artists, setArtists] = useState<any[]>([]);
+    const [selectedArtist, setSelectedArtist] = useState("");
+
+    useEffect(() => {
+        const fetchArtists = async () => {
+            try {
+                const res = await fetch("/backend/artist/");
+                if (res.ok) {
+                    const data = await res.json();
+                    setArtists(data);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchArtists();
+    }, []);
 
     const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -53,7 +71,7 @@ function CreateEventForm({ user }: { user: AuthUser }) {
 
     const handleSubmit = async () => {
         setError(null);
-        if (!date || !lieu || !city || !price || !places) {
+        if (!date || !lieu || !city || !price || !places || !selectedArtist) {
             setError("Veuillez remplir tous les champs obligatoires.");
             return;
         }
@@ -76,6 +94,7 @@ function CreateEventForm({ user }: { user: AuthUser }) {
                     place: places,
                     imageUrl,
                     organizerId: user.id,
+                    artistId: selectedArtist,
                 }),
             });
             if (res.ok) {
@@ -117,6 +136,25 @@ function CreateEventForm({ user }: { user: AuthUser }) {
                                 onChange={(e) => setName(e.target.value)}
                                 className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-lg px-4 py-3 text-sm text-gray-800 dark:text-white placeholder-gray-300 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
                             />
+                        </div>
+                        <div>
+                            <label className="text-xs text-gray-400 mb-1 block">
+                                Artiste
+                            </label>
+
+                            <select
+                                value={selectedArtist}
+                                onChange={(e) => setSelectedArtist(e.target.value)}
+                                className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-lg px-4 py-3 text-sm text-gray-800 dark:text-white focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                            >
+                                <option value="">Sélectionner un artiste</option>
+
+                                {artists.map((artist) => (
+                                    <option key={artist.id} value={artist.id}>
+                                        {artist.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="flex gap-3">
