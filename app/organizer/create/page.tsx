@@ -98,14 +98,6 @@ function CreateEventForm({ user }: { user: AuthUser }) {
 
                 {/* Header avec bouton back */}
                 <div className="flex items-center gap-3 mb-6">
-                    <button
-                        onClick={() => router.back()}
-                        className="w-8 h-8 rounded-lg border border-gray-200 bg-white flex items-center justify-center hover:bg-gray-50 transition-colors"
-                    >
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                            <path d="M9 11L5 7l4-4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </button>
                     <div>
                         <h1 className="text-lg font-medium text-gray-800 dark:text-white">Créer un concert</h1>
                         <p className="text-xs text-gray-400">Remplissez les informations de votre événement</p>

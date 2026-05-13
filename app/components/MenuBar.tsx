@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Home, Search, Bell, Settings, LogOut, Users, Ticket } from "lucide-react";
 import { logout } from "@/app/hooks/userAuth";
 import { subscribeToSessionChanges } from "@/app/utils/sessionStorage";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation"; // ← ajoute usePathname
 
 type AuthUser = {
     id: number;
@@ -24,7 +24,7 @@ function getServerSnapshot(): null {
 
 const FloatingNav = () => {
     const router = useRouter();
-    const [active, setActive] = useState(0);
+    const pathname = usePathname(); // ← route courante
     const [indicatorStyle, setIndicatorStyle] = useState({ height: 0, top: 0, left: 0, width: 0 });
 
     const containerRef = useRef<HTMLDivElement>(null);
@@ -39,8 +39,8 @@ const FloatingNav = () => {
     const user: AuthUser | null = stored ? JSON.parse(stored) : null;
 
     const userItems = [
-        { id: 0, icon: <Home size={22} />, label: "Dashboard", href: "/user/dashboard" },
-        { id: 1, icon: <Ticket size={22} />, label: "Mes billets", href: "/user/tickets" },
+        { id: 0, icon: <Home size={22} />, label: "Dashboard", href: "/user/user-dashboard" },
+        { id: 1, icon: <Ticket size={22} />, label: "Mes billets", href: "/user/ticket/list" },
         { id: 2, icon: <Bell size={22} />, label: "Alertes", href: null },
         { id: 3, icon: <Settings size={22} />, label: "Paramètres", href: "/user/settings" },
     ];
@@ -50,17 +50,22 @@ const FloatingNav = () => {
         { id: 1, icon: <Search size={22} />, label: "Mes concerts", href: "/organizer/concerts" },
         { id: 2, icon: <Bell size={22} />, label: "Créer un concert", href: "/organizer/create" },
         { id: 3, icon: <Users size={22} />, label: "Artistes", href: "/organizer/artist" },
-        { id: 4, icon: <Settings size={22} />, label: "Paramètres", href: "/organizer/settings"},
+        { id: 4, icon: <Settings size={22} />, label: "Paramètres", href: "/organizer/settings" },
     ];
 
     const items = user?.role === "organizer" ? organizerItems : userItems;
 
+    // ← Calcule l'index actif depuis l'URL courante
+    const active = items.findIndex((item) =>
+        item.href && pathname.startsWith(item.href)
+    );
+    const activeIndex = active === -1 ? 0 : active;
+
     useEffect(() => {
         const updateIndicator = () => {
-            if (btnRefs.current[active] && containerRef.current) {
-                const btn = btnRefs.current[active];
+            const btn = btnRefs.current[activeIndex];
+            if (btn && containerRef.current) {
                 const container = containerRef.current;
-                if (!btn) return;
                 const btnRect = btn.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
                 setIndicatorStyle({
@@ -74,7 +79,7 @@ const FloatingNav = () => {
         updateIndicator();
         window.addEventListener("resize", updateIndicator);
         return () => window.removeEventListener("resize", updateIndicator);
-    }, [active]);
+    }, [activeIndex]); // ← réagit au changement de route
 
     const initiale = user?.name?.charAt(0).toUpperCase() ?? "?";
 
@@ -96,7 +101,7 @@ const FloatingNav = () => {
                     <span className="text-xs text-gray-400">
                         {user?.role === "organizer" ? "Organisateur"
                             : user?.role === "admin" ? "Admin"
-                                : "Utilisateur"}
+                            : "Utilisateur"}
                     </span>
                 </div>
             </div>
@@ -114,10 +119,13 @@ const FloatingNav = () => {
                         key={item.id}
                         ref={(el) => { btnRefs.current[item.id] = el; }}
                         onClick={() => {
-                            setActive(index);
                             if (item.href) router.push(item.href);
                         }}
-                        className="relative flex flex-row items-center justify-start gap-3 py-4 px-6 w-full text-sm font-medium text-gray-600 dark:text-gray-300"
+                        className={`relative flex flex-row items-center justify-start gap-3 py-4 px-6 w-full text-sm font-medium transition-colors ${
+                            index === activeIndex
+                                ? "text-blue-600 dark:text-blue-400"
+                                : "text-gray-600 dark:text-gray-300"
+                        }`}
                     >
                         <div className="z-10">{item.icon}</div>
                         <span className="z-10 text-xs mt-1">{item.label}</span>
