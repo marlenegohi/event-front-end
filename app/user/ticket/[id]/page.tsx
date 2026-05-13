@@ -7,6 +7,7 @@ import ConcertSummaryCard from "@/app/components/ConcertSummary";
 import TicketSelector from "@/app/components/TicketSelector";
 import ContactForm from "@/app/components/ContactForm";
 import OrderSummary from "@/app/components/OrderSummary";
+import {AuthUser} from "@/app/hooks/userAuth";
 
 type Event = {
     id: number;

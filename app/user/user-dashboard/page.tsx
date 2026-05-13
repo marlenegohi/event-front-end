@@ -212,39 +212,38 @@ function UserDashboardContent({ user }: { user: AuthUser }) {
                 )}
 
                 {/* Mes billets */}
-                {loading && <p className="text-xs text-gray-400">Chargement...</p>}
-                {error && <p className="text-xs text-red-400">{error}</p>}
-
-                {!loading && !error && !hasSearched && (
+                {!loading && !error && !hasSearched && tickets.length > 0 && (
                     <>
-                        <h1 className="text-2xl font-bold text-blue-500">Mes billets</h1>
-                        {tickets.length === 0 ? (
-                            <p className="text-xs text-gray-400">
-                                Vous n&apos;avez pas encore de billets.
-                            </p>
-                        ) : (
-                            <div className="grid grid-cols-2 gap-3">
-                                {tickets.map((ticket) => (
-                                    <TicketCard
-                                        key={ticket.id}
-                                        image={ticket.eventImageUrl ?? ""}
-                                        date={ticket.eventDate
-                                            ? new Date(ticket.eventDate).toLocaleDateString("fr-FR", {
-                                                day: "numeric",
-                                                month: "short",
-                                                year: "numeric"
-                                            })
-                                            : "—"
-                                        }
-                                        description={ticket.eventDescription ?? "—"}
-                                        venue={ticket.eventAddress ?? "—"}
-                                        city={ticket.eventCity ?? "—"}
-                                        price={ticket.eventPrice ?? 0}
-                                        status={ticket.status}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                        <div className="flex items-center justify-between">
+                            <h1 className="text-2xl font-bold text-blue-500">Mes derniers billets</h1>
+                            <button
+                                onClick={() => router.push("/user/ticket/list")}
+                                className="text-xs text-blue-600 hover:underline"
+                            >
+                                Voir tous →
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                            {tickets.slice(0, 2).map((ticket) => (
+                                <TicketCard
+                                    key={ticket.id}
+                                    image={ticket.eventImageUrl ?? ""}
+                                    date={ticket.eventDate
+                                        ? new Date(ticket.eventDate).toLocaleDateString("fr-FR", {
+                                            day: "numeric",
+                                            month: "short",
+                                            year: "numeric"
+                                        })
+                                        : "—"
+                                    }
+                                    description={ticket.eventDescription ?? "—"}
+                                    venue={ticket.eventAddress ?? "—"}
+                                    city={ticket.eventCity ?? "—"}
+                                    price={ticket.eventPrice ?? 0}
+                                    status={ticket.status}
+                                />
+                            ))}
+                        </div>
                     </>
                 )}
             </main>

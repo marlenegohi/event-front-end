@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import { motion } from "framer-motion";
-import { Home, Search, Bell, Settings, LogOut, Users } from "lucide-react";
+import { Home, Search, Bell, Settings, LogOut, Users, Ticket } from "lucide-react";
 import { logout } from "@/app/hooks/userAuth";
 import { subscribeToSessionChanges } from "@/app/utils/sessionStorage";
 import { useRouter } from "next/navigation";
@@ -39,10 +39,10 @@ const FloatingNav = () => {
     const user: AuthUser | null = stored ? JSON.parse(stored) : null;
 
     const userItems = [
-        { id: 0, icon: <Home size={22} />, label: "Home", href: "/user/dashboard" },
-        { id: 1, icon: <Search size={22} />, label: "Search", href: null },
-        { id: 2, icon: <Bell size={22} />, label: "Alerts", href: null },
-        { id: 3, icon: <Settings size={22} />, label: "Settings", href: null },
+        { id: 0, icon: <Home size={22} />, label: "Dashboard", href: "/user/dashboard" },
+        { id: 1, icon: <Ticket size={22} />, label: "Mes billets", href: "/user/tickets" },
+        { id: 2, icon: <Bell size={22} />, label: "Alertes", href: null },
+        { id: 3, icon: <Settings size={22} />, label: "Paramètres", href: null },
     ];
 
     const organizerItems = [
