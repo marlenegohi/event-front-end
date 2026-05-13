@@ -42,7 +42,7 @@ const FloatingNav = () => {
         { id: 0, icon: <Home size={22} />, label: "Dashboard", href: "/user/dashboard" },
         { id: 1, icon: <Ticket size={22} />, label: "Mes billets", href: "/user/tickets" },
         { id: 2, icon: <Bell size={22} />, label: "Alertes", href: null },
-        { id: 3, icon: <Settings size={22} />, label: "Paramètres", href: null },
+        { id: 3, icon: <Settings size={22} />, label: "Paramètres", href: "/user/settings" },
     ];
 
     const organizerItems = [
@@ -50,7 +50,7 @@ const FloatingNav = () => {
         { id: 1, icon: <Search size={22} />, label: "Mes concerts", href: "/organizer/concerts" },
         { id: 2, icon: <Bell size={22} />, label: "Créer un concert", href: "/organizer/create" },
         { id: 3, icon: <Users size={22} />, label: "Artistes", href: "/organizer/artist" },
-        { id: 4, icon: <Settings size={22} />, label: "Settings", href: null },
+        { id: 4, icon: <Settings size={22} />, label: "Paramètres", href: "/organizer/settings"},
     ];
 
     const items = user?.role === "organizer" ? organizerItems : userItems;
